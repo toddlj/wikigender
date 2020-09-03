@@ -19,6 +19,31 @@ with open(noun_file_path, 'r') as noun_file:
             feminine_nouns.append(line.split()[0])
 
 
+def count_nouns_in_page(page):
+    print(page[0])
+    start_time = timeit.default_timer()
+
+    wiki = mwparserfromhell.parse(page[1])
+    words = wiki.strip_code(normalize=True).split()
+
+    number_of_masculine_words = 0
+    number_of_feminine_words = 0
+
+    for word in words:
+        stripped_word = word.lower().translate(str.maketrans('', '', string.punctuation))
+        if stripped_word == "":
+            continue
+        if binary_search_recursive(masculine_nouns, stripped_word, 0, len(masculine_nouns)):
+            number_of_masculine_words += 1
+        elif binary_search_recursive(feminine_nouns, stripped_word, 0, len(feminine_nouns)):
+            number_of_feminine_words += 1
+
+    print(number_of_masculine_words, "masculine words")
+    print(number_of_feminine_words, "feminine words")
+
+    print("time", timeit.default_timer() - start_time, "seconds")
+
+
 class WikiXmlHandler(xml.sax.handler.ContentHandler):
     """Content handler for Wiki XML data using SAX"""
 
@@ -65,30 +90,8 @@ for line in subprocess.Popen(['bzcat'],
     parser.feed(line)
 
     # Stop when 3 articles have been found
-    if len(handler._pages) > 1:
+    if len(handler._pages) > 20:
         break
 
-for page_index in range(1, 2):
-    start_time = timeit.default_timer()
-
-    # Create the wiki article
-    wiki = mwparserfromhell.parse(handler._pages[page_index][1])
-    print(handler._pages[page_index][0])
-    words = wiki.strip_code(normalize=True).split()
-
-    number_of_masculine_words = 0
-    number_of_feminine_words = 0
-
-    for word in words:
-        stripped_word = word.lower().translate(str.maketrans('', '', string.punctuation))
-        if stripped_word == "":
-            continue
-        if binary_search_recursive(masculine_nouns, stripped_word, 0, len(masculine_nouns)):
-            number_of_masculine_words += 1
-        elif binary_search_recursive(feminine_nouns, stripped_word, 0, len(feminine_nouns)):
-            number_of_feminine_words += 1
-
-    print(number_of_masculine_words, "masculine words")
-    print(number_of_feminine_words, "feminine words")
-
-    print("time", timeit.default_timer() - start_time, "seconds")
+for page_index in range(0, 20):
+    count_nouns_in_page(handler._pages[page_index])
