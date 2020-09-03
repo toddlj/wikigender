@@ -3,6 +3,9 @@ import xml.sax
 import mwparserfromhell
 import string
 
+import timeit
+
+from helper import binary_search_recursive
 
 masculine_nouns = []
 feminine_nouns = []
@@ -62,10 +65,11 @@ for line in subprocess.Popen(['bzcat'],
     parser.feed(line)
 
     # Stop when 3 articles have been found
-    if len(handler._pages) > 20:
+    if len(handler._pages) > 1:
         break
 
-for page_index in range(0, 20):
+for page_index in range(1, 2):
+    start_time = timeit.default_timer()
 
     # Create the wiki article
     wiki = mwparserfromhell.parse(handler._pages[page_index][1])
@@ -79,14 +83,12 @@ for page_index in range(0, 20):
         stripped_word = word.lower().translate(str.maketrans('', '', string.punctuation))
         if stripped_word == "":
             continue
-        if stripped_word in masculine_nouns:
-            # print(stripped_word, "masculine")
+        if binary_search_recursive(masculine_nouns, stripped_word, 0, len(masculine_nouns)):
             number_of_masculine_words += 1
-        elif stripped_word in feminine_nouns:
-            # print(stripped_word, "feminine")
+        elif binary_search_recursive(feminine_nouns, stripped_word, 0, len(feminine_nouns)):
             number_of_feminine_words += 1
-        # else:
-            # print(stripped_word, "neither")
 
     print(number_of_masculine_words, "masculine words")
     print(number_of_feminine_words, "feminine words")
+
+    print("time", timeit.default_timer() - start_time, "seconds")

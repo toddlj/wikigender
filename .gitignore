@@ -1,3 +1,4 @@
 downloads/
 .idea/
 nouns/
+__pycache__/
