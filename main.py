@@ -52,7 +52,6 @@ class WikiXmlHandler(xml.sax.handler.ContentHandler):
         self._buffer = None
         self._values = {}
         self._current_tag = None
-        self._pages = []
 
     def characters(self, content):
         """Characters between opening and closing tags"""
@@ -71,7 +70,7 @@ class WikiXmlHandler(xml.sax.handler.ContentHandler):
             self._values[name] = ' '.join(self._buffer)
 
         if name == 'page':
-            self._pages.append((self._values['title'], self._values['text']))
+            count_nouns_in_page((self._values['title'], self._values['text']))
 
 
 data_path = "downloads/eswiki-20200901-pages-articles-multistream1.xml-p1p143637.bz2"
@@ -88,10 +87,3 @@ for line in subprocess.Popen(['bzcat'],
                              stdin=open(data_path),
                              stdout=subprocess.PIPE).stdout:
     parser.feed(line)
-
-    # Stop when 3 articles have been found
-    if len(handler._pages) > 20:
-        break
-
-for page_index in range(0, 20):
-    count_nouns_in_page(handler._pages[page_index])
