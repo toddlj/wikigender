@@ -4,6 +4,18 @@ import mwparserfromhell
 import string
 
 
+masculine_nouns = []
+feminine_nouns = []
+
+noun_file_path = "nouns/nouns.txt"
+with open(noun_file_path, 'r') as noun_file:
+    for line in noun_file:
+        if line.split()[2][2] == 'M':
+            masculine_nouns.append(line.split()[0])
+        elif line.split()[2][2] == 'F':
+            feminine_nouns.append(line.split()[0])
+
+
 class WikiXmlHandler(xml.sax.handler.ContentHandler):
     """Content handler for Wiki XML data using SAX"""
 
@@ -34,47 +46,47 @@ class WikiXmlHandler(xml.sax.handler.ContentHandler):
             self._pages.append((self._values['title'], self._values['text']))
 
 
-# data_path = "downloads/enwiki-20200520-pages-articles-multistream1.xml-p1p30303.bz2"
-#
-# # Object for handling xml
-# handler = WikiXmlHandler()
-#
-# # Parsing object
-# parser = xml.sax.make_parser()
-# parser.setContentHandler(handler)
-#
-# # Iteratively process file
-# for line in subprocess.Popen(['bzcat'],
-#                              stdin=open(data_path),
-#                              stdout=subprocess.PIPE).stdout:
-#     parser.feed(line)
-#
-#     # Stop when 3 articles have been found
-#     if len(handler._pages) > 2:
-#         break
-#
-# # Create the wiki article
-# wiki = mwparserfromhell.parse(handler._pages[1][1])
-# words = wiki.strip_code(normalize=True).split()
-#
-# for word in words:
-#     stripped_word = word.lower().translate(str.maketrans('', '', string.punctuation))
-#     if stripped_word == "":
-#         continue
-#     print(stripped_word)
-#
+data_path = "downloads/eswiki-20200901-pages-articles-multistream1.xml-p1p143637.bz2"
 
-masculine_nouns = []
-feminine_nouns = []
+# Object for handling xml
+handler = WikiXmlHandler()
 
-noun_file_path = "nouns/nouns.txt"
-with open(noun_file_path, 'r') as noun_file:
-    for line in noun_file:
-        if line.split()[2][2] == 'M':
-            masculine_nouns.append(line.split()[0])
-        elif line.split()[2][2] == 'F':
-            feminine_nouns.append(line.split()[0])
+# Parsing object
+parser = xml.sax.make_parser()
+parser.setContentHandler(handler)
 
-print(masculine_nouns[-1:])
-print(feminine_nouns[-1:])
+# Iteratively process file
+for line in subprocess.Popen(['bzcat'],
+                             stdin=open(data_path),
+                             stdout=subprocess.PIPE).stdout:
+    parser.feed(line)
 
+    # Stop when 3 articles have been found
+    if len(handler._pages) > 20:
+        break
+
+for page_index in range(0, 20):
+
+    # Create the wiki article
+    wiki = mwparserfromhell.parse(handler._pages[page_index][1])
+    print(handler._pages[page_index][0])
+    words = wiki.strip_code(normalize=True).split()
+
+    number_of_masculine_words = 0
+    number_of_feminine_words = 0
+
+    for word in words:
+        stripped_word = word.lower().translate(str.maketrans('', '', string.punctuation))
+        if stripped_word == "":
+            continue
+        if stripped_word in masculine_nouns:
+            # print(stripped_word, "masculine")
+            number_of_masculine_words += 1
+        elif stripped_word in feminine_nouns:
+            # print(stripped_word, "feminine")
+            number_of_feminine_words += 1
+        # else:
+            # print(stripped_word, "neither")
+
+    print(number_of_masculine_words, "masculine words")
+    print(number_of_feminine_words, "feminine words")
