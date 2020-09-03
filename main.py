@@ -34,31 +34,47 @@ class WikiXmlHandler(xml.sax.handler.ContentHandler):
             self._pages.append((self._values['title'], self._values['text']))
 
 
-data_path = "downloads/enwiki-20200520-pages-articles-multistream1.xml-p1p30303.bz2"
+# data_path = "downloads/enwiki-20200520-pages-articles-multistream1.xml-p1p30303.bz2"
+#
+# # Object for handling xml
+# handler = WikiXmlHandler()
+#
+# # Parsing object
+# parser = xml.sax.make_parser()
+# parser.setContentHandler(handler)
+#
+# # Iteratively process file
+# for line in subprocess.Popen(['bzcat'],
+#                              stdin=open(data_path),
+#                              stdout=subprocess.PIPE).stdout:
+#     parser.feed(line)
+#
+#     # Stop when 3 articles have been found
+#     if len(handler._pages) > 2:
+#         break
+#
+# # Create the wiki article
+# wiki = mwparserfromhell.parse(handler._pages[1][1])
+# words = wiki.strip_code(normalize=True).split()
+#
+# for word in words:
+#     stripped_word = word.lower().translate(str.maketrans('', '', string.punctuation))
+#     if stripped_word == "":
+#         continue
+#     print(stripped_word)
+#
 
-# Object for handling xml
-handler = WikiXmlHandler()
+masculine_nouns = []
+feminine_nouns = []
 
-# Parsing object
-parser = xml.sax.make_parser()
-parser.setContentHandler(handler)
+noun_file_path = "nouns/nouns.txt"
+with open(noun_file_path, 'r') as noun_file:
+    for line in noun_file:
+        if line.split()[2][2] == 'M':
+            masculine_nouns.append(line.split()[0])
+        elif line.split()[2][2] == 'F':
+            feminine_nouns.append(line.split()[0])
 
-# Iteratively process file
-for line in subprocess.Popen(['bzcat'],
-                             stdin=open(data_path),
-                             stdout=subprocess.PIPE).stdout:
-    parser.feed(line)
+print(masculine_nouns[-1:])
+print(feminine_nouns[-1:])
 
-    # Stop when 3 articles have been found
-    if len(handler._pages) > 2:
-        break
-
-# Create the wiki article
-wiki = mwparserfromhell.parse(handler._pages[1][1])
-words = wiki.strip_code(normalize=True).split()
-
-for word in words:
-    stripped_word = word.lower().translate(str.maketrans('', '', string.punctuation))
-    if stripped_word == "":
-        continue
-    print(stripped_word)
