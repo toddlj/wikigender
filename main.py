@@ -1,6 +1,7 @@
 import subprocess
 import xml.sax
 import mwparserfromhell
+import string
 
 
 class WikiXmlHandler(xml.sax.handler.ContentHandler):
@@ -54,5 +55,10 @@ for line in subprocess.Popen(['bzcat'],
 
 # Create the wiki article
 wiki = mwparserfromhell.parse(handler._pages[1][1])
+words = wiki.strip_code(normalize=True).split()
 
-print(wiki.strip_code())
+for word in words:
+    stripped_word = word.lower().translate(str.maketrans('', '', string.punctuation))
+    if stripped_word == "":
+        continue
+    print(stripped_word)
