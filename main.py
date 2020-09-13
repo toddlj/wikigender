@@ -73,7 +73,7 @@ class WikiXmlHandler(xml.sax.handler.ContentHandler):
             count_nouns_in_page((self._values['title'], self._values['text']))
 
 
-data_path = "downloads/eswiki-20200901-pages-articles-multistream1.xml-p1p143637.bz2"
+data_path = "downloads/eswiki-20200901-pages-articles1.xml-p1p143637.bz2"
 
 # Object for handling xml
 handler = WikiXmlHandler()
