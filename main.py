@@ -20,8 +20,6 @@ with open(noun_file_path, 'r') as noun_file:
 
 
 def count_nouns_in_page(page):
-    print(page[0])
-    start_time = timeit.default_timer()
 
     wiki = mwparserfromhell.parse(page[1])
     words = wiki.strip_code(normalize=True).split()
@@ -38,20 +36,19 @@ def count_nouns_in_page(page):
         elif binary_search_recursive(feminine_nouns, stripped_word, 0, len(feminine_nouns)):
             number_of_feminine_words += 1
 
-    print(number_of_masculine_words, "masculine words")
-    print(number_of_feminine_words, "feminine words")
 
-    print("time", timeit.default_timer() - start_time, "seconds")
+    return [number_of_masculine_words, number_of_feminine_words]
 
 
 class WikiXmlHandler(xml.sax.handler.ContentHandler):
     """Content handler for Wiki XML data using SAX"""
 
-    def __init__(self):
+    def __init__(self, _output_file):
         xml.sax.handler.ContentHandler.__init__(self)
         self._buffer = None
         self._values = {}
         self._current_tag = None
+        self.output_file = _output_file
 
     def characters(self, content):
         """Characters between opening and closing tags"""
@@ -70,20 +67,28 @@ class WikiXmlHandler(xml.sax.handler.ContentHandler):
             self._values[name] = ' '.join(self._buffer)
 
         if name == 'page':
-            count_nouns_in_page((self._values['title'], self._values['text']))
+            counts = count_nouns_in_page((self._values['title'], self._values['text']))
+            self.output_file.write(f"{counts[0]} {counts[1]} {self._values['title']}\n")
 
 
 data_path = "downloads/eswiki-20200901-pages-articles1.xml-p1p143637.bz2"
+output_file_path = "counts/noun_counts.txt"
 
-# Object for handling xml
-handler = WikiXmlHandler()
+start_time = timeit.default_timer()
 
-# Parsing object
-parser = xml.sax.make_parser()
-parser.setContentHandler(handler)
+with open(output_file_path, "w") as output_file:
 
-# Iteratively process file
-for line in subprocess.Popen(['bzcat'],
-                             stdin=open(data_path),
-                             stdout=subprocess.PIPE).stdout:
-    parser.feed(line)
+    # Object for handling xml
+    handler = WikiXmlHandler(output_file)
+
+    # Parsing object
+    parser = xml.sax.make_parser()
+    parser.setContentHandler(handler)
+
+    # Iteratively process file
+    for line in subprocess.Popen(['bzcat'],
+                                 stdin=open(data_path),
+                                 stdout=subprocess.PIPE).stdout:
+        parser.feed(line)
+
+print("time", timeit.default_timer() - start_time, "seconds")
