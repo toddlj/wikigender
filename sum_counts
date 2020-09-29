@@ -1,0 +1,23 @@
+import os
+import timeit
+
+number_of_masculine_nouns = 0
+number_of_feminine_nouns = 0
+
+start_time = timeit.default_timer()
+for counts_file_name in os.listdir("counts/"):
+    counts_file_path = "counts/" + counts_file_name
+    with open(counts_file_path, "r") as counts_file:
+        for line in counts_file:
+            masculine_nouns = line.split()[0]
+            feminine_nouns = line.split()[1]
+            title = line.lstrip(f"{masculine_nouns} {feminine_nouns} ")
+
+            if masculine_nouns != '-':
+                number_of_masculine_nouns += int(masculine_nouns)
+                number_of_feminine_nouns += int(feminine_nouns)
+
+            # break
+print("Successful: ", timeit.default_timer() - start_time, "seconds")
+
+print(f"Found {number_of_masculine_nouns} masculine nouns and {number_of_feminine_nouns} feminine nouns.")
