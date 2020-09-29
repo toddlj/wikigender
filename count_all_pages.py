@@ -2,6 +2,7 @@ import subprocess
 import xml.sax
 import mwparserfromhell
 import string
+import os
 
 import timeit
 
@@ -36,7 +37,6 @@ def count_nouns_in_page(page):
         elif binary_search_recursive(feminine_nouns, stripped_word, 0, len(feminine_nouns)):
             number_of_feminine_words += 1
 
-
     return [number_of_masculine_words, number_of_feminine_words]
 
 
@@ -67,28 +67,36 @@ class WikiXmlHandler(xml.sax.handler.ContentHandler):
             self._values[name] = ' '.join(self._buffer)
 
         if name == 'page':
-            counts = count_nouns_in_page((self._values['title'], self._values['text']))
-            self.output_file.write(f"{counts[0]} {counts[1]} {self._values['title']}\n")
+            try:
+                counts = count_nouns_in_page((self._values['title'], self._values['text']))
+                self.output_file.write(f"{counts[0]} {counts[1]} {self._values['title']}\n")
+            except mwparserfromhell.parser.ParserError:
+                # Unknown error occurs, so ignore pages with this error.
+                self.output_file.write(f"- - {self._values['title']}\n")
 
 
-data_path = "downloads/eswiki-20200901-pages-articles1.xml-p1p143637.bz2"
-output_file_path = "counts/noun_counts.txt"
+for data_file_name in os.listdir("downloads/"):
 
-start_time = timeit.default_timer()
+    data_path = "downloads/" + data_file_name
+    output_file_path = "counts/" + data_file_name.split(".")[0] + "-" + data_file_name.split(".")[1] + ".txt"
 
-with open(output_file_path, "w") as output_file:
+    start_time = timeit.default_timer()
 
-    # Object for handling xml
-    handler = WikiXmlHandler(output_file)
+    print(f"Analysing {data_file_name}")
 
-    # Parsing object
-    parser = xml.sax.make_parser()
-    parser.setContentHandler(handler)
+    with open(output_file_path, "w") as output_file:
 
-    # Iteratively process file
-    for line in subprocess.Popen(['bzcat'],
-                                 stdin=open(data_path),
-                                 stdout=subprocess.PIPE).stdout:
-        parser.feed(line)
+        # Object for handling xml
+        handler = WikiXmlHandler(output_file)
 
-print("time", timeit.default_timer() - start_time, "seconds")
+        # Parsing object
+        parser = xml.sax.make_parser()
+        parser.setContentHandler(handler)
+
+        # Iteratively process file
+        for line in subprocess.Popen(['bzcat'],
+                                     stdin=open(data_path),
+                                     stdout=subprocess.PIPE).stdout:
+            parser.feed(line)
+
+    print("Successful: ", timeit.default_timer() - start_time, "seconds")
