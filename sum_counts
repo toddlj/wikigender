@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-url = "https://es.wikipedia.org/wiki/Ciencia_política"
+url = "https://es.wikipedia.org/wiki/Ingeniería"
 
 page_html = requests.get(url).text
 page_soup = BeautifulSoup(page_html, "html.parser")
@@ -48,6 +48,7 @@ print()
 print(f"Totals for \"{page_title}\":")
 print(f"{page_number_of_masculine_nouns + neighbours_number_of_masculine_nouns} masculine nouns.")
 print(f"{page_number_of_feminine_nouns + neighbours_number_of_feminine_nouns} feminine nouns.")
+print(f"{page_number_of_masculine_nouns + page_number_of_masculine_nouns + neighbours_number_of_masculine_nouns + neighbours_number_of_masculine_nouns} m/f nouns in total")
 try:
     print(f"Ratio: {round((page_number_of_masculine_nouns + neighbours_number_of_masculine_nouns) / (page_number_of_feminine_nouns + neighbours_number_of_feminine_nouns), 4)} M/F")
 except ZeroDivisionError:

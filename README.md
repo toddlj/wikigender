@@ -26,7 +26,34 @@ This project is an attempt to test the above claim by comparing masculine and fe
 
 ## Results
 
+Here are the results.
+This table lists the number of nouns in the listed article and all the articles it links to, together with the ratio of masculine nouns to feminine nouns.
 
+| Article | Translation | Number of nouns | Ratio M/F | 
+| --- | --- | --- | --- |
+| Ingeniería | Engineering | 309,208 | 0.9266 |
+| Tren | Train | 153,426 | 0.9708 |
+| Diseño | Design | 69,966 | 0.9770 |
+| Arquitectura | Architecture | 236,646 | 0.9554 | 
+| Ciencia política | Political science | 280,862 | 0.9804 |
+| Botánica | Botany | 309,742 | 0.9821 |
+| Biología | Biology | 542,049 | 0.9822 |
+| Naturaleza | Nature | 455,088 | 1.0045 |
+| Animalia | Animalia | 256,790 | 1.0652 |
+|  |  |  |  |
+| Wikipedia total | | 438,157,505 | 0.9349 |
+
+### Interpretation
+
+The articles are just a few that I selected which I thought reflected the natural vs artificial dichotomy.
+The articles which are *artificial* seem to have lower masculine:feminine ratios, while the *natural* articles have a higher ratio.
+The difference is very small, however, so it's possible that there is no discernible difference.
+This is not predicted by the claim we are testing, which would predict a higher ratio for *artificial* articles compared to *natural* articles.
+
+#### Caveats
+
+* It is possible this negative result is a consequence of the shortcomings listed above.
+* It is possible I have incorrectly understood what *artificial* and *natural* objects are.
 
 ## Resources
 
