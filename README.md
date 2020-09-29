@@ -55,10 +55,10 @@ This is not predicted by the claim we are testing, which would predict a higher 
 * It is possible this negative result is a consequence of the shortcomings listed above.
 * It is possible I have incorrectly understood what *artificial* and *natural* objects are.
 
-## Resources
+## Resources and licenses
 
 * I used [this article](https://towardsdatascience.com/wikipedia-data-science-working-with-the-worlds-largest-encyclopedia-c08efbac5f5c) as a basis for downloading and parsing the Wikipedia articles.
 * I used the [list of nouns](https://raw.githubusercontent.com/TALP-UPC/FreeLing/master/data/es/dictionary/entries/MM.nom) in the dictionary FreeLing.
 This list was extracted from the [Spanish Resource Grammar projects](http://www.upf.edu/pdi/iula/montserrat.marimon/srg.html) and was developed at the [Institut Universitari de Linguistica Aplicada](http://www.iula.upf.edu) of the Universitat Pompeu Fabra.
 It is distributed under a "[Lesser General Public License For Linguistic Resources](https://github.com/TALP-UPC/FreeLing/blob/master/LICENSES/LGPLLR.license)" license.
-
+* The rest of the the software in this repository is licensed with an MIT license (see LICENSE.txt).
