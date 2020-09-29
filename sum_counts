@@ -4,9 +4,8 @@ import timeit
 import requests
 from bs4 import BeautifulSoup
 
-# url = "https://es.wikipedia.org/wiki/Metros_sobre_el_nivel_del_mar"
-# url = "https://es.wikipedia.org/wiki/Benito_Mussolini"
-url = "https://es.wikipedia.org/wiki/Rep%C3%BAblica_Social_Italiana"
+
+url = "https://es.wikipedia.org/wiki/Ciencia_política"
 
 page_html = requests.get(url).text
 page_soup = BeautifulSoup(page_html, "html.parser")
@@ -51,6 +50,10 @@ print(f"{page_number_of_masculine_nouns + neighbours_number_of_masculine_nouns} 
 print(f"{page_number_of_feminine_nouns + neighbours_number_of_feminine_nouns} feminine nouns.")
 try:
     print(f"Ratio: {round((page_number_of_masculine_nouns + neighbours_number_of_masculine_nouns) / (page_number_of_feminine_nouns + neighbours_number_of_feminine_nouns), 4)} M/F")
+except ZeroDivisionError:
+    pass
+try:
+    print(f"Page ratio: {round(page_number_of_masculine_nouns / page_number_of_feminine_nouns, 4)} M/F")
 except ZeroDivisionError:
     pass
 print()
